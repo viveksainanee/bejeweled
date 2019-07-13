@@ -13,11 +13,11 @@ class Row extends Component {
     let imageFiles = [img00, img01, img02, img03, img04, img05, img06];
 
     // this takes the id from the board state and turns it into an image
-    let imageComponents = this.props.cells.map(id => (
+    let imageComponents = this.props.gems.map(id => (
       <img src={imageFiles[id]} alt="gem" />
     ));
 
-    // return <div>{this.props.cells}</div>;
+    // return <div>{this.props.gems}</div>;
     return <div>{imageComponents}</div>;
   }
 }
