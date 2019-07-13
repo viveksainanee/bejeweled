@@ -7,9 +7,19 @@ const NUMBER_OF_COLORS = 3;
 class Board extends Component {
   constructor(props) {
     super(props);
+    let board = createBoard();
 
-    // Initialize a board to be able to create the
-    // board's initial state
+    this.state = {
+      // This board represents a 2D grid, like so:
+      // [[2, 0,... 1]
+      //  [1, 2,... 1]
+      //  ...
+      //  [1, 0,... 2]]
+      board
+    };
+  }
+
+  createBoard() {
     let board = [];
 
     // Inserts values into the board (as a 2D grid)
@@ -22,19 +32,35 @@ class Board extends Component {
       }
       board.push(rowValues);
     }
+  }
 
-    this.state = {
-      // This board represents a 2D grid, like so:
-      // [[2], [0],... [1]
-      //  [1], [2],... [1]
-      //  ...
-      //  [1], [0],... [2]]
-      board
+  // Why make this as a function instead of with the initial create?
+  // This function would need to be called with every playerMove anyway
+  // To avoid redundant code in the constructor, this function can be created
+  // here and called on the creation of the board.
+
+  checkMatches() {
+    let checkVertical = function(row, col) {
+      let matchedCells = 1;
+      let cellsSeen = [[row, col]];
+      let rowToCheck = row + 1;
+      while (
+        row < BOARD_ROWS &&
+        this.state.board[rowToCheck][col] === this.this.state.board[row][col]
+      ) {}
     };
+
+    // for every gem, check down and right
+    // (up and left would be redundant checks)
+    for (let row = 0; row < BOARD_ROWS; row++) {
+      for (let col = 0; col < BOARD_COLS; col++) {
+        checkVertical(row, col);
+      }
+    }
   }
 
   render() {
-    let rows = this.state.board.map(row => <Row row={row} />);
+    let rows = this.state.board.map(rowData => <Row cells={rowData} />);
     return <div>{rows}</div>;
   }
 }
