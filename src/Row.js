@@ -15,10 +15,15 @@ class Row extends Component {
 
     // this takes the id from the board state and turns it into an image
     let imageComponents = this.props.gems.map(id => (
-      <img src={imageFiles[id]} alt="gem" key={uuid()} />
+      <img
+        src={imageFiles[id]}
+        alt="gem"
+        height="60px"
+        width="60px"
+        key={uuid()}
+      />
     ));
 
-    // return <div>{this.props.gems}</div>;
     return <div>{imageComponents}</div>;
   }
 }
