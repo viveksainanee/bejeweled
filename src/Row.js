@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import uuid from 'uuid/v4';
 import img00 from './assets/00.png';
 import img01 from './assets/01.png';
 import img02 from './assets/03.png';
@@ -14,7 +15,7 @@ class Row extends Component {
 
     // this takes the id from the board state and turns it into an image
     let imageComponents = this.props.gems.map(id => (
-      <img src={imageFiles[id]} alt="gem" />
+      <img src={imageFiles[id]} alt="gem" key={uuid()} />
     ));
 
     // return <div>{this.props.gems}</div>;
