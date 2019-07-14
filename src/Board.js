@@ -20,7 +20,7 @@ class Board extends Component {
 
   componentDidMount() {
     try {
-      // Creates board, and ensures it's valid
+      // Creates board, without any pre-existing matches
       let board = this.createBoard();
       board = this.removeMatches(board);
 
@@ -32,7 +32,7 @@ class Board extends Component {
   }
 
   // Inserts values into the board (as a 2D grid)
-  // of values from 0 to NUMBER_OF_COLORS-1.
+  // of values from 0 to NUMBER_OF_COLORS-1 (used for img ids)
   createBoard() {
     let board = [];
     for (let row = 0; row < BOARD_ROWS; row++) {
@@ -60,7 +60,7 @@ class Board extends Component {
     return board;
   }
 
-  // Used for New Game Button
+  // Resets state for New Game Button
   handleNewGame() {
     let board = this.createBoard();
     board = this.removeMatches(board);
