@@ -21,7 +21,7 @@ class Board extends Component {
       // Creates board, without any pre-existing matches
       if (this.state.numberOfColors > 1) {
         let board = this.createBoard();
-        board = this.removeMatches(board);
+        board = this.makeBoardValid(board);
         this.setState({ board, isLoading: false }); // async
       } else {
         throw new Error('Number of colors must be > 1');
@@ -43,27 +43,46 @@ class Board extends Component {
       }
       board.push(rowValues);
     }
+
     return board;
   }
 
-  // Replace existing matches of three
-  removeMatches(board) {
+  makeBoardValid(board) {
+    // Part 1: Ensure a valid move
+    // Find a spot on board
+    let randomRow = Math.floor(Math.random() * (this.state.boardRows - 2));
+    let randomCol = Math.floor(Math.random() * (this.state.boardCols - 1));
+    // Pick a random color
+    let randomColor = Math.floor(Math.random() * this.state.numberOfColors);
+    // Insert into the board
+    board[randomRow][randomCol] = randomColor;
+    board[randomRow + 1][randomCol] = randomColor;
+    board[randomRow + 2][randomCol + 1] = randomColor;
+    // block these coordinates during randomization
+    let blockedCoords = new Set();
+    blockedCoords.add(`${randomRow},${randomCol}`);
+    blockedCoords.add(`${randomRow + 1},${randomCol}`);
+    blockedCoords.add(`${randomRow + 2},${randomCol + 1}`);
+
+    // Part 2: Remove matches
     for (let row = 0; row < this.state.boardRows; row++) {
       for (let col = 0; col < this.state.boardCols; col++) {
-        let attempt = 0;
-        while (
-          (board[row - 2] && board[row - 2][col] === board[row][col]) ||
-          board[row][col - 2] === board[row][col]
-        ) {
-          if (attempt < 100) {
-            board[row][col] = Math.floor(
-              Math.random() * this.state.numberOfColors
-            );
-            attempt++;
-          } else {
-            throw new Error(
-              'Attempted to remove matches 100 times - Please check the code'
-            );
+        if (!blockedCoords.has(`${row},${col}`)) {
+          let attempt = 0;
+          while (
+            (board[row - 2] && board[row - 2][col] === board[row][col]) ||
+            board[row][col - 2] === board[row][col]
+          ) {
+            if (attempt < 100) {
+              board[row][col] = Math.floor(
+                Math.random() * this.state.numberOfColors
+              );
+              attempt++;
+            } else {
+              throw new Error(
+                'Attempted to remove matches 100 times - Please check the code'
+              );
+            }
           }
         }
       }
@@ -74,7 +93,7 @@ class Board extends Component {
   // Resets state for New Game Button
   handleNewGame() {
     let board = this.createBoard();
-    board = this.removeMatches(board);
+    board = this.makeBoardValid(board);
     this.setState({ board });
   }
 
