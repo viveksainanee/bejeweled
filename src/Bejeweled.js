@@ -7,7 +7,7 @@ class Bejeweled extends Component {
     return (
       <div id="bejeweled">
         <h1>Bejeweled</h1>
-        <Board />
+        <Board numberOfColors={7} boardRows={8} boardCols={8} />
       </div>
     );
   }
