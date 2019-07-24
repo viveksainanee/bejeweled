@@ -19,12 +19,14 @@ class Board extends Component {
   componentDidMount() {
     try {
       // Creates board, without any pre-existing matches
-      if (this.state.numberOfColors > 1) {
+      if (this.state.numberOfColors < 3 || this.state.numberOfColors > 7) {
+        throw new Error('Number of colors must be between 3 and 7');
+      } else if (this.state.boardCols < 3 || this.state.boardRows < 3) {
+        throw new Error('Board Dimensions must be at least 3 by 3');
+      } else {
         let board = this.createBoard();
         board = this.makeBoardValid(board);
         this.setState({ board, isLoading: false }); // async
-      } else {
-        throw new Error('Number of colors must be > 1');
       }
     } catch (err) {
       // Puts any errors in state
@@ -48,7 +50,7 @@ class Board extends Component {
   }
 
   makeBoardValid(board) {
-    // Part 1: Ensure a valid move
+    // Part 1: Insert potential first move
     // Find a spot on board
     let randomRow = Math.floor(Math.random() * (this.state.boardRows - 2));
     let randomCol = Math.floor(Math.random() * (this.state.boardCols - 1));
@@ -58,6 +60,7 @@ class Board extends Component {
     board[randomRow][randomCol] = randomColor;
     board[randomRow + 1][randomCol] = randomColor;
     board[randomRow + 2][randomCol + 1] = randomColor;
+
     // block these coordinates during randomization
     let blockedCoords = new Set();
     blockedCoords.add(`${randomRow},${randomCol}`);
@@ -71,30 +74,38 @@ class Board extends Component {
           let attempt = 0;
           while (
             (board[row - 2] && board[row - 2][col] === board[row][col]) ||
-            board[row][col - 2] === board[row][col]
+            (board[row + 2] && board[row + 2][col] === board[row][col]) ||
+            board[row][col - 2] === board[row][col] ||
+            board[row][col + 2] === board[row][col]
           ) {
-            if (attempt < 100) {
+            if (attempt < 1000) {
               board[row][col] = Math.floor(
                 Math.random() * this.state.numberOfColors
               );
               attempt++;
             } else {
               throw new Error(
-                'Attempted to remove matches 100 times - Please check the code'
+                'Attempted to remove matches 1000 times - Please try increasing the number of colors'
               );
             }
           }
         }
       }
     }
+
     return board;
   }
 
   // Resets state for New Game Button
   handleNewGame() {
-    let board = this.createBoard();
-    board = this.makeBoardValid(board);
-    this.setState({ board });
+    try {
+      let board = this.createBoard();
+      board = this.makeBoardValid(board);
+      this.setState({ board });
+    } catch (err) {
+      // Puts any errors in state
+      this.setState(st => ({ errors: [...st.errors, err] }));
+    }
   }
 
   render() {
